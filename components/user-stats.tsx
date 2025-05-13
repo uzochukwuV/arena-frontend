@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PieChart } from "@tremor/react"
+import {DonutChart} from "@tremor/react"
+
 
 // Mock data - would be fetched from the blockchain in a real implementation
 const statsData = [
@@ -57,7 +58,7 @@ export default function UserStats() {
                 <TabsTrigger value="outcome">Outcome</TabsTrigger>
               </TabsList>
               <TabsContent value="type" className="pt-4">
-                <PieChart
+                <DonutChart
                   data={questTypeData}
                   index="name"
                   valueFormatter={(number) => `${number} quests`}
@@ -67,7 +68,7 @@ export default function UserStats() {
                 />
               </TabsContent>
               <TabsContent value="prediction" className="pt-4">
-                <PieChart
+                <DonutChart
                   data={predictionData}
                   index="name"
                   valueFormatter={(number) => `${number} quests`}
@@ -77,7 +78,7 @@ export default function UserStats() {
                 />
               </TabsContent>
               <TabsContent value="outcome" className="pt-4">
-                <PieChart
+                <DonutChart
                   data={outcomeData}
                   index="name"
                   valueFormatter={(number) => `${number} quests`}
