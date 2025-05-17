@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, TrendingUp, Zap } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import useHook from "@/hooks/uniswap/hook"
+import { POOL_ID, Quest } from "@/lib/constants"
 
 // Mock data - would be fetched from the blockchain in a real implementation
 const mockQuests = [
@@ -64,8 +66,50 @@ const mockQuests = [
   },
 ]
 
+
+
 export default function ActiveQuests() {
-  const [activeTab, setActiveTab] = useState("all")
+  const [activeTab, setActiveTab] = useState("all");
+  const { getCurrentQuestStats } = useHook()
+  const [quests, setQuests] = useState<Quest[]>([])
+
+  useEffect(() => {
+    console.log("is Fetching")
+    getCurrentQuestStats()
+      .then((data) => {
+        console.log(data)
+        setQuests([
+          {
+            id: "1",
+            poolId: POOL_ID,
+            type: "FREQUENCY",
+            totalStaked: data.totalStaked,
+            endTime: data.endTime,
+            stats: {
+              buys: data.totalBuys,
+              sells: data.totalSells,
+              buyVolume: data.totalVolumeOfBuys,
+              sellVolume: data.totalVolumeOfSells,
+            }
+          },
+          {
+            id: "2",
+            poolId: POOL_ID,
+            type: "VOLUME",
+            totalStaked: data.totalStaked,
+            endTime: data.endTime,
+            stats: {
+              buys: data.totalBuys,
+              sells: data.totalSells,
+              buyVolume: data.totalVolumeOfBuys,
+              sellVolume: data.totalVolumeOfSells,
+            }
+          }
+        ])
+        console.log("Done")
+      })
+  }, [quests])
+
 
   const filteredQuests =
     activeTab === "all" ? mockQuests : mockQuests.filter((quest) => quest.type === activeTab.toUpperCase())
@@ -89,7 +133,7 @@ export default function ActiveQuests() {
         </TabsList>
         <TabsContent value={activeTab} className="mt-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {filteredQuests.map((quest) => (
+            {quests?.map((quest) => (
               <Card key={quest.id} className="overflow-hidden">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">

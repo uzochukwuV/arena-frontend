@@ -19,3 +19,4 @@ export const wallets = [
   createWallet("io.rabby"),
   createWallet("io.zerion.wallet"),
 ];
+

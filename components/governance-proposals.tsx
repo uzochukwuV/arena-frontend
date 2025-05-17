@@ -177,7 +177,7 @@ export default function GovernanceProposals() {
                     <Progress
                       value={(proposal.votesFor / (proposal.votesFor + proposal.votesAgainst)) * 100}
                       className="h-2"
-                      indicatorClassName="bg-emerald-500"
+                     
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>

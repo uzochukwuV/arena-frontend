@@ -4,6 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress"
 import { TrendingDown, TrendingUp, Users, Zap } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import { useEffect, useState } from "react"
+import { POOL_ID, Quest } from "@/lib/constants"
+import useHook from "@/hooks/uniswap/hook"
 
 // Mock data - would be fetched from the blockchain in a real implementation
 const mockQuestDetails = {
@@ -22,30 +25,59 @@ const mockQuestDetails = {
 }
 
 export default function QuestDetails({ id }: { id: string }) {
+   const [quest, setQuest] = useState<Quest & {participants: number}>()
+  const {getCurrentQuestStats} = useHook()
+
+  
+    useEffect(()=>{
+      console.log("is Fetching")
+      getCurrentQuestStats()
+      .then((data)=>{
+        console.log(data)
+        setQuest(
+          {
+            id:"1",
+            poolId:POOL_ID,
+            type:"FREQUENCY",
+            totalStaked: data.totalStaked,
+            endTime: data.endTime,
+            participants:6,
+            stats: {
+              buys: data.totalBuys,
+              sells: data.totalSells,
+               buyVolume: data.totalVolumeOfBuys,
+              sellVolume: data.totalVolumeOfSells,
+            }
+          })
+        console.log("Done")
+      })
+      console.log(quest)
+    },[quest])
   // In a real implementation, we would fetch the quest details based on the ID
-  const questDetails = mockQuestDetails
+  const questDetails = quest
 
   // Calculate progress percentages
   const totalVolume =
-    Number.parseInt(questDetails.stats.buyVolume.replace(/[^0-9]/g, "")) +
-    Number.parseInt(questDetails.stats.sellVolume.replace(/[^0-9]/g, ""))
+    Number.parseInt(questDetails?.stats.buyVolume.replace(/[^0-9]/g, "")!) +
+    Number.parseInt(questDetails?.stats.sellVolume.replace(/[^0-9]/g, "")!)
   const buyVolumePercentage = Math.round(
-    (Number.parseInt(questDetails.stats.buyVolume.replace(/[^0-9]/g, "")) / totalVolume) * 100,
+    (Number.parseInt(questDetails?.stats.buyVolume.replace(/[^0-9]/g, "")!) / totalVolume) * 100,
   )
   const sellVolumePercentage = 100 - buyVolumePercentage
 
-  const totalTrades = questDetails.stats.buys + questDetails.stats.sells
-  const buyFrequencyPercentage = Math.round((questDetails.stats.buys / totalTrades) * 100)
+  const totalTrades = questDetails?.stats.buys! + questDetails?.stats.sells!
+  const buyFrequencyPercentage = Math.round((questDetails?.stats.buys! / totalTrades) * 100)
   const sellFrequencyPercentage = 100 - buyFrequencyPercentage
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
-          {questDetails.type === "VOLUME" ? "Volume" : "Frequency"} Quest
+          {questDetails?.type === "VOLUME" ? "Volume" : "Frequency"} Quest
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Pool: {questDetails.poolId} • Ends {formatDistanceToNow(questDetails.endTime, { addSuffix: true })}
+          Pool: {questDetails?.poolId} • Ends 
+          {/* {formatDistanceToNow(questDetails?.endTime!, { addSuffix: true })} */}
         </p>
       </div>
 
@@ -61,11 +93,11 @@ export default function QuestDetails({ id }: { id: string }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Participants</p>
-                <p className="text-2xl font-bold">{questDetails.participants}</p>
+                <p className="text-2xl font-bold">{questDetails?.participants}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Staked</p>
-                <p className="text-2xl font-bold">{questDetails.totalStaked}</p>
+                <p className="text-2xl font-bold">{questDetails?.totalStaked}</p>
               </div>
             </div>
           </CardContent>
@@ -80,7 +112,7 @@ export default function QuestDetails({ id }: { id: string }) {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-center p-4 rounded-md bg-muted">
-              {questDetails.type === "VOLUME" ? (
+              {questDetails?.type === "VOLUME" ? (
                 <div className="flex items-center text-lg font-medium">
                   <TrendingUp className="w-6 h-6 mr-2 text-emerald-500" />
                   Volume Quest
@@ -109,9 +141,9 @@ export default function QuestDetails({ id }: { id: string }) {
                   <TrendingUp className="w-4 h-4 mr-2 text-emerald-500" />
                   <span>Buy Volume</span>
                 </div>
-                <span className="font-medium">{questDetails.stats.buyVolume}</span>
+                <span className="font-medium">{questDetails?.stats.buyVolume}</span>
               </div>
-              <Progress value={buyVolumePercentage} className="h-2 bg-muted" indicatorClassName="bg-emerald-500" />
+              <Progress value={buyVolumePercentage} className="h-2 bg-muted" color="bg-emerald-500" />
             </div>
 
             <div className="space-y-2">
@@ -120,9 +152,9 @@ export default function QuestDetails({ id }: { id: string }) {
                   <TrendingDown className="w-4 h-4 mr-2 text-rose-500" />
                   <span>Sell Volume</span>
                 </div>
-                <span className="font-medium">{questDetails.stats.sellVolume}</span>
+                <span className="font-medium">{questDetails?.stats.sellVolume}</span>
               </div>
-              <Progress value={sellVolumePercentage} className="h-2 bg-muted" indicatorClassName="bg-rose-500" />
+              <Progress value={sellVolumePercentage} className="h-2 bg-muted" color="bg-rose-500" />
             </div>
           </CardContent>
         </Card>
@@ -139,9 +171,9 @@ export default function QuestDetails({ id }: { id: string }) {
                   <TrendingUp className="w-4 h-4 mr-2 text-emerald-500" />
                   <span>Buy Transactions</span>
                 </div>
-                <span className="font-medium">{questDetails.stats.buys}</span>
+                <span className="font-medium">{questDetails?.stats.buys}</span>
               </div>
-              <Progress value={buyFrequencyPercentage} className="h-2 bg-muted" indicatorClassName="bg-emerald-500" />
+              <Progress value={buyFrequencyPercentage} className="h-2 bg-muted" color="bg-emerald-500" />
             </div>
 
             <div className="space-y-2">
@@ -150,9 +182,9 @@ export default function QuestDetails({ id }: { id: string }) {
                   <TrendingDown className="w-4 h-4 mr-2 text-rose-500" />
                   <span>Sell Transactions</span>
                 </div>
-                <span className="font-medium">{questDetails.stats.sells}</span>
+                <span className="font-medium">{questDetails?.stats.sells}</span>
               </div>
-              <Progress value={sellFrequencyPercentage} className="h-2 bg-muted" indicatorClassName="bg-rose-500" />
+              <Progress value={sellFrequencyPercentage} className="h-2 bg-muted" color="bg-rose-500" />
             </div>
           </CardContent>
         </Card>
