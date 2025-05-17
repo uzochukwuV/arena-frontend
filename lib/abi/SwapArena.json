@@ -901,39 +901,30 @@
     },
     {
         "type": "function",
+        "name": "emergencyWithdraw",
+        "inputs": [
+            {
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
         "name": "getCurrentQuestStats",
         "inputs": [
             {
-                "name": "key",
-                "type": "tuple",
-                "internalType": "struct PoolKey",
-                "components": [
-                    {
-                        "name": "currency0",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "currency1",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "fee",
-                        "type": "uint24",
-                        "internalType": "uint24"
-                    },
-                    {
-                        "name": "tickSpacing",
-                        "type": "int24",
-                        "internalType": "int24"
-                    },
-                    {
-                        "name": "hooks",
-                        "type": "address",
-                        "internalType": "contract IHooks"
-                    }
-                ]
+                "name": "poolId",
+                "type": "bytes32",
+                "internalType": "PoolId"
             }
         ],
         "outputs": [
@@ -1067,36 +1058,9 @@
         "name": "getQuestId",
         "inputs": [
             {
-                "name": "key",
-                "type": "tuple",
-                "internalType": "struct PoolKey",
-                "components": [
-                    {
-                        "name": "currency0",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "currency1",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "fee",
-                        "type": "uint24",
-                        "internalType": "uint24"
-                    },
-                    {
-                        "name": "tickSpacing",
-                        "type": "int24",
-                        "internalType": "int24"
-                    },
-                    {
-                        "name": "hooks",
-                        "type": "address",
-                        "internalType": "contract IHooks"
-                    }
-                ]
+                "name": "poolId",
+                "type": "bytes32",
+                "internalType": "PoolId"
             },
             {
                 "name": "_currentIndex",
@@ -1118,36 +1082,9 @@
         "name": "getQuestStatus",
         "inputs": [
             {
-                "name": "key",
-                "type": "tuple",
-                "internalType": "struct PoolKey",
-                "components": [
-                    {
-                        "name": "currency0",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "currency1",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "fee",
-                        "type": "uint24",
-                        "internalType": "uint24"
-                    },
-                    {
-                        "name": "tickSpacing",
-                        "type": "int24",
-                        "internalType": "int24"
-                    },
-                    {
-                        "name": "hooks",
-                        "type": "address",
-                        "internalType": "contract IHooks"
-                    }
-                ]
+                "name": "poolId",
+                "type": "bytes32",
+                "internalType": "PoolId"
             }
         ],
         "outputs": [
@@ -1245,36 +1182,9 @@
         "name": "joinQuest",
         "inputs": [
             {
-                "name": "key",
-                "type": "tuple",
-                "internalType": "struct PoolKey",
-                "components": [
-                    {
-                        "name": "currency0",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "currency1",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "fee",
-                        "type": "uint24",
-                        "internalType": "uint24"
-                    },
-                    {
-                        "name": "tickSpacing",
-                        "type": "int24",
-                        "internalType": "int24"
-                    },
-                    {
-                        "name": "hooks",
-                        "type": "address",
-                        "internalType": "contract IHooks"
-                    }
-                ]
+                "name": "poolId",
+                "type": "bytes32",
+                "internalType": "PoolId"
             },
             {
                 "name": "_amount",
@@ -1485,36 +1395,9 @@
         "name": "settleQuest",
         "inputs": [
             {
-                "name": "key",
-                "type": "tuple",
-                "internalType": "struct PoolKey",
-                "components": [
-                    {
-                        "name": "currency0",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "currency1",
-                        "type": "address",
-                        "internalType": "Currency"
-                    },
-                    {
-                        "name": "fee",
-                        "type": "uint24",
-                        "internalType": "uint24"
-                    },
-                    {
-                        "name": "tickSpacing",
-                        "type": "int24",
-                        "internalType": "int24"
-                    },
-                    {
-                        "name": "hooks",
-                        "type": "address",
-                        "internalType": "contract IHooks"
-                    }
-                ]
+                "name": "poolId",
+                "type": "bytes32",
+                "internalType": "PoolId"
             }
         ],
         "outputs": [],
@@ -1737,7 +1620,4 @@
         ],
         "anonymous": false
     }
- 
-  
-   
 ]

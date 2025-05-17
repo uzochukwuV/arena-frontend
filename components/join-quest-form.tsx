@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { TrendingDown, TrendingUp, Zap } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 
+import { useActiveAccount } from "thirdweb/react"
+import { POOL_ID, signer, SWAPARENA_ABI } from "@/lib/constants"
+import { ethers } from "ethers"
 // Mock data - would be fetched from the blockchain in a real implementation
 const mockQuestDetails = {
   id: "1",
@@ -27,11 +30,15 @@ const mockQuestDetails = {
 }
 
 export default function JoinQuestForm({ id }: { id: string }) {
-  const [prediction, setPrediction] = useState<string>("")
-  const [amount, setAmount] = useState<string>("")
+  const [prediction, setPrediction] = useState<string>("1")
+  const [amount, setAmount] = useState<string>("10")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // const {joinQuest}= useHook()
+  const account = useActiveAccount()
+
 
   // In a real implementation, we would fetch the quest details based on the ID
+
   const questDetails = mockQuestDetails
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,8 +56,9 @@ export default function JoinQuestForm({ id }: { id: string }) {
         amount,
       })
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      
+    await joinQuest({amount: Number(amount), isPut:false, type:1})
+      
 
       // Show success message or redirect
       alert("Successfully joined the quest!")
@@ -98,7 +106,7 @@ export default function JoinQuestForm({ id }: { id: string }) {
             <Label htmlFor="prediction">Your Prediction</Label>
             <RadioGroup value={prediction} onValueChange={setPrediction} className="grid grid-cols-2 gap-4">
               <div className="relative">
-                <RadioGroupItem value="buy" id="buy" className="sr-only peer" />
+                <RadioGroupItem value="0" id="buy" className="sr-only peer" />
                 <Label
                   htmlFor="buy"
                   className="flex flex-col items-center justify-between p-4 border-2 rounded-md cursor-pointer border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
@@ -108,7 +116,7 @@ export default function JoinQuestForm({ id }: { id: string }) {
                 </Label>
               </div>
               <div className="relative">
-                <RadioGroupItem value="sell" id="sell" className="sr-only peer" />
+                <RadioGroupItem value="1" id="sell" className="sr-only peer" />
                 <Label
                   htmlFor="sell"
                   className="flex flex-col items-center justify-between p-4 border-2 rounded-md cursor-pointer border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
@@ -119,6 +127,8 @@ export default function JoinQuestForm({ id }: { id: string }) {
               </div>
             </RadioGroup>
           </div>
+
+
 
           <div className="space-y-2">
             <Label htmlFor="amount">Stake Amount (BEX)</Label>
@@ -141,3 +151,91 @@ export default function JoinQuestForm({ id }: { id: string }) {
     </Card>
   )
 }
+
+
+
+const joinQuest = async ({ amount, isPut, type }: { amount: number; isPut: boolean; type: number }) => {
+  if (typeof window.ethereum === 'undefined') {
+    console.error('MetaMask or a Web3 provider is not installed.');
+    // Optionally, prompt the user to install MetaMask
+    return;
+  }
+
+  try {
+    // Request access to the user's accounts if needed
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0]; // Use the first connected account
+    console.log(account)
+   const baseSepoliaChainId = 84532; // Hex for 84532
+
+  // Ask MetaMask to switch to Base Sepolia
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: ethers.utils.hexValue(baseSepoliaChainId) }],
+  });
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner(account);
+
+    console.log(signer)
+
+    // Assuming you have your contract ABI and address defined elsewhere
+    const contractAddress = 'YOUR_CONTRACT_ADDRESS'; // Replace with your contract address
+
+       const TOKEN_0 = "0x5c602C98Ad2434c86D83f956bF3B22323dDe7f85";
+   const TOKEN_1 = "0xF51980A3455732B35852362E8a749ac67399FAdF";
+   const HOOK_ADDRESS = "0xcE7e5Acc2e1c3095B52846cf07bAfA1b88540040"; // 0xcE7e5Acc2e1c3095B52846cf07bAfA1b88540040
+   const POOL_ID = "0x60ab7380ad3be47445bc04450117dca7e25600ef591e57e3bb0f484c86c03e51";
+   const POOL_MANAGER ="0x05E73354cFDd6745C338b50BcFDfA3Aa6fA03408"
+   const POSITION_MANAGER ="0x4b2c77d209d3405f41a037ec6c77f7f5b8e2ca80"
+   const STATEVIEW = "0x571291b572ed32ce6751a2Cb2486EbEe8DEfB9B4"
+   
+    const hookContract = new ethers.Contract(HOOK_ADDRESS, SWAPARENA_ABI, signer);
+
+    console.log(hookContract);
+
+    //  "name": "joinQuest",
+    //     "inputs": [
+    //         {
+    //             "name": "poolId",
+    //             "type": "bytes32",
+    //             "internalType": "PoolId"
+    //         },
+    //         {
+    //             "name": "_amount",
+    //             "type": "uint128",
+    //             "internalType": "uint128"
+    //         },
+    //         {
+    //             "name": "_isPut",
+    //             "type": "bool",
+    //             "internalType": "bool"
+    //         },
+    //         {
+    //             "name": "_type",
+    //             "type": "uint8",
+    //             "internalType": "enum SwapArena.QuestType"
+    //         }
+    //     ],
+
+    const tx = await hookContract.joinQuest(
+      POOL_ID,
+      100, // Assuming 18 decimal places
+      false,
+      0,
+      { value: ethers.utils.parseEther('0') } // If the function requires Ether, set the value here
+    );
+
+    console.log('Transaction sent:', tx.hash);
+    await tx.wait(); // Wait for the transaction to be mined
+    console.log('Transaction confirmed!');
+    // Optionally, update your UI to reflect the successful join
+  } catch (error) {
+    console.error('Error joining quest:', error);
+    // Handle the error appropriately (e.g., display an error message to the user)
+  }
+};
+
+// Example of how you might call this function from your component:
+// const handleJoinButtonClick = async () => {
+//   await joinQuest({ amount: 1, isPut: true, type: 0 });
+// };

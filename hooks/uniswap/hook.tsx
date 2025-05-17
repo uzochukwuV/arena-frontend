@@ -2,10 +2,11 @@
 
 import React from 'react'
 import { useContracts } from '../use-contract'
-import { FeeAmount, HOOK_ADDRESS, POOL_ID, provider, STATEVIEW, STATEVIEW_ABI, TICK_SPACINGS, TOKEN_0, TOKEN_1 } from '@/lib/constants'
+import { FeeAmount, HOOK_ADDRESS, POOL_ID, provider, signer, STATEVIEW, STATEVIEW_ABI, TICK_SPACINGS, TOKEN_0, TOKEN_1 } from '@/lib/constants'
 import { ethers } from 'ethers'
 import Quest_ABI from "../../lib/abi/SwapArena.json"
 import { Pool } from '@uniswap/v4-sdk'
+import { useActiveAccount } from 'thirdweb/react'
 
 
 export enum QuestType {
@@ -66,6 +67,19 @@ export default function useHook() {
         return token
        
     }
+    
+    const joinQuest =async ({amount, isPut, type, account}:{amount:number, isPut: boolean, type:number, account:any})=>{
+      console.log(account, amount, type, isPut)
+       const data = await hookContract.connect(account).joinQuest(
+        POOL_ID,
+        amount * 1e18,
+        isPut,
+        type, {
+          value:0
+        }
+    )
+    
+    }
 
     const getCurrentPoolIndex = async ()=>{
       const name = await hookContract.name()
@@ -76,19 +90,23 @@ export default function useHook() {
     }
 
     const getQuestId = async () => {
-    const currentIndex = await getCurrentPoolIndex();
+      const currentIndex = await getCurrentPoolIndex();
     
-    return currentIndex
+      return currentIndex
   };
 
    const getCurrentQuestStats = async () => {
-    const stats = await hookContract.questTradeStats(POOL_ID, 1);
+    const id = await getQuestId();
+
+    const stats = await hookContract.questTradeStats(POOL_ID, id);
     
     console.log(stats)
     
  
-    const data = await getTotalStaked(1)
+    const data = await getTotalStaked(id)
     console.log(data)
+
+    const list = await getQuestersList(id)
     
     return {
       totalBuys: stats.totalBuys,
@@ -97,7 +115,8 @@ export default function useHook() {
       totalVolumeOfBuys: stats.totalVolumeOfBuys,
       startTime: stats.startTime,
       endTime: stats.endTime,
-      totalStaked: data.totalStakedFrequency.to + data.totalStakedVolume
+      totalStaked: data.totalStakedFrequency + data.totalStakedVolume,
+      questers: list
     };
   };
 
@@ -112,6 +131,7 @@ export default function useHook() {
 
   const getUserQuestStake = async (questId: number, userAddress: string): Promise<QuestStake> => {
     const stake = await hookContract.userQuestStakes(questId, userAddress);
+    console.log(stake)
     return {
       isPut: stake.isPut,
       hasStaked: stake.hasStaked,
@@ -228,7 +248,7 @@ export default function useHook() {
     getTotalStaked,
     
     // // Transactions
-    // joinQuest,
+    joinQuest,
     // settleQuest,
     // claimReward,
     
@@ -237,3 +257,7 @@ export default function useHook() {
     UserQuest
   }
 }
+
+
+
+

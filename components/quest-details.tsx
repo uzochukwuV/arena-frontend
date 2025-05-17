@@ -39,20 +39,20 @@ export default function QuestDetails({ id }: { id: string }) {
             id:"1",
             poolId:POOL_ID,
             type:"FREQUENCY",
-            totalStaked: data.totalStaked,
-            endTime: data.endTime,
-            participants:6,
+            totalStaked: data.totalStaked.length.toString(),
+            endTime: new Date(Number( data.endTime.toString()) * 1000).getTime(),
+            participants:data.questers.toString(),
             stats: {
-              buys: data.totalBuys,
-              sells: data.totalSells,
-               buyVolume: data.totalVolumeOfBuys,
-              sellVolume: data.totalVolumeOfSells,
+              buys: Number(data.totalBuys.toString()),
+              sells: Number(data.totalSells.toString()),
+              buyVolume: data.totalVolumeOfBuys.toString(),
+              sellVolume: data.totalVolumeOfSells.toString(),
             }
           })
         console.log("Done")
       })
       console.log(quest)
-    },[quest])
+    },[id])
   // In a real implementation, we would fetch the quest details based on the ID
   const questDetails = quest
 
@@ -68,6 +68,8 @@ export default function QuestDetails({ id }: { id: string }) {
   const totalTrades = questDetails?.stats.buys! + questDetails?.stats.sells!
   const buyFrequencyPercentage = Math.round((questDetails?.stats.buys! / totalTrades) * 100)
   const sellFrequencyPercentage = 100 - buyFrequencyPercentage
+
+  console.log(quest?.endTime)
 
   return (
     <div className="space-y-6">

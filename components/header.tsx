@@ -11,7 +11,6 @@ import { ConnectButton, useActiveAccount } from "thirdweb/react";
 import { cn } from "@/lib/utils"
 import NotificationIndicator from "@/components/notification-indicator"
 import { client, wallets } from "@/app/client"
-import { usePositionHook } from "@/hooks/uniswap/position"
 import useHook from "@/hooks/uniswap/hook"
 import { useContracts } from "@/hooks/use-contract"
 
@@ -20,7 +19,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const {getSlot0, getCurrentPoolIndex,getUserQuestStake, getQuestId, getTotalStaked, getCurrentQuestStats } = useHook()
-  const {approveTokens} = usePositionHook()
+  const {join} = useContracts()
  
 
   const navigation = [
@@ -41,10 +40,8 @@ export default function Header() {
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-xl font-bold tracking-tight">SwapArena</span>
-             <button onClick={async()=>getCurrentQuestStats()} className=" bg-white">Hello</button>
-              <button onClick={async()=>getTotalStaked(await getQuestId())} className=" bg-white">9505005</button>
-              <button onClick={async()=>getUserQuestStake(await getQuestId(), account?.address!)} className=" bg-white">9505005</button>
-              
+             <button onClick={join} className=" bg-white">Hello</button>
+            
           </Link>
           <div className="hidden md:flex md:gap-x-6">
             {navigation.map((item) => (

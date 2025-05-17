@@ -83,26 +83,26 @@ export default function ActiveQuests() {
             id: "1",
             poolId: POOL_ID,
             type: "FREQUENCY",
-            totalStaked: data.totalStaked,
-            endTime: data.endTime,
+            totalStaked: data.totalStaked.toString(),
+            endTime: data.endTime.toString(),
             stats: {
-              buys: data.totalBuys,
-              sells: data.totalSells,
-              buyVolume: data.totalVolumeOfBuys,
-              sellVolume: data.totalVolumeOfSells,
+              buys: data.totalBuys.toString(),
+              sells: data.totalSells.toString(),
+              buyVolume: data.totalVolumeOfBuys.toString(),
+              sellVolume: data.totalVolumeOfSells.toString(),
             }
           },
           {
             id: "2",
             poolId: POOL_ID,
             type: "VOLUME",
-            totalStaked: data.totalStaked,
-            endTime: data.endTime,
+            totalStaked: data.totalStaked.toString(),
+            endTime: data.endTime.toString(),
             stats: {
-              buys: data.totalBuys,
-              sells: data.totalSells,
-              buyVolume: data.totalVolumeOfBuys,
-              sellVolume: data.totalVolumeOfSells,
+              buys: data.totalBuys.toString(),
+              sells: data.totalSells.toString(),
+              buyVolume: data.totalVolumeOfBuys.toString(),
+              sellVolume: data.totalVolumeOfSells.toString(),
             }
           }
         ])
@@ -146,7 +146,8 @@ export default function ActiveQuests() {
                       <CardTitle>{quest.type === "VOLUME" ? "Volume" : "Frequency"} Quest</CardTitle>
                     </div>
                     <div className="px-2 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary">
-                      {formatDistanceToNow(quest.endTime, { addSuffix: true })}
+                      {/* {formatDistanceToNow(quest.endTime, { addSuffix: true })} */}
+                      {quest.endTime}
                     </div>
                   </div>
                   <CardDescription className="pt-2">
